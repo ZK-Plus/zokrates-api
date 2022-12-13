@@ -7,11 +7,10 @@ assignees: ''
 
 ---
 
----
-Expected: How the app `should` work
-Observed: How the app `is` working
+| Observed                 | Expected                   |
+|--------------------------|----------------------------|
+| How the app `is` working | How the app `should` work  |
 
----
 
 ### Describe the bug** :bug:
 A clear and concise description of what the bug is.
