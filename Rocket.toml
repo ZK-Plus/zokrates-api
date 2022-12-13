@@ -1,0 +1,11 @@
+[default]
+address = "0.0.0.0"
+limits = { json = "100MiB" }
+
+out_dir = "out"
+
+[debug]
+log_level = "debug"
+workers = 2
+
+[release]
