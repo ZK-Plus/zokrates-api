@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  server:
+    build:
+      dockerfile: Dockerfile.local
+      cache_from:
+        - rustlang/rust:nightly-alpine3.15
+    volumes:
+      - .:/app
+    ports:
+      - 8000:8080
+    environment:
+      - RUST_MIN_STACK=1000000
+    command: sh -c "cargo +nightly watch -x run"
