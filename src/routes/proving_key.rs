@@ -1,6 +1,5 @@
 use zokrates_api::utils::config::AppConfig;
 use zokrates_api::utils::errors::{ApiError, ApiResult};
-use rocket::data::ToByteUnit;
 use rocket::serde::{json::Json, Serialize};
 use rocket::{Data, State};
 use rocket_okapi::okapi::schemars::JsonSchema;
@@ -30,8 +29,9 @@ pub async fn post_proving_key(
     }
 
     let permanent_location = path.join("proving.key");
+    let file_size_limit = config.proving_key_file_size_limit.parse().unwrap();
     upload
-        .open(2000.megabytes())
+        .open(file_size_limit)
         .into_file(permanent_location)
         .await
         .map_err(|e| ApiError::InternalError(e.to_string()))?;
