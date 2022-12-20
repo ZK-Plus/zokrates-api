@@ -8,6 +8,7 @@ use rocket_okapi::openapi;
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::path::Path;
+use std::time::{Instant, Duration};
 use zokrates_ark::Ark;
 use zokrates_ast::ir::{self, ProgEnum};
 use zokrates_proof_systems::GM17;
@@ -24,6 +25,7 @@ pub struct GenerateProofRequestBody {
 pub struct GenerateProofResponseBody {
     // TODO: serialize TaggedProof
     pub payload: serde_json::Value,
+    pub time: Duration,
 }
 
 #[openapi]
@@ -33,6 +35,7 @@ pub fn post_generate_proof(
     req_body: Json<GenerateProofRequestBody>,
     config: &State<AppConfig>,
 ) -> ApiResult<GenerateProofResponseBody> {
+    let now = Instant::now();
     // parse input program
     let program_dir = Path::new(&config.out_dir).join(program_hash);
     if !program_dir.is_dir() {
@@ -87,7 +90,10 @@ pub fn post_generate_proof(
             log::debug!("Proof:\n{}", proof_str);
             let proof = serde_json::from_str(&proof_str).unwrap();
 
-            Ok(Json(GenerateProofResponseBody { payload: proof }))
+            Ok(Json(GenerateProofResponseBody {
+                time: now.elapsed(),
+                payload: proof,
+            }))
         }
         _ => unreachable!(),
     }

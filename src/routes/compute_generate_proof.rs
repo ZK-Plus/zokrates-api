@@ -9,6 +9,7 @@ use serde_json::from_reader;
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::path::Path;
+use std::time::Instant;
 use zokrates_ark::Ark;
 use zokrates_ast::ir::ProgEnum;
 use zokrates_ast::typed::abi::Abi;
@@ -28,6 +29,7 @@ pub fn post_compute_generate_proof(
     witness: Json<WitnessRequestBody>,
     config: &State<AppConfig>,
 ) -> ApiResult<GenerateProofResponseBody> {
+    let now = Instant::now();
     // parse input program
     let program_dir = Path::new(&config.out_dir).join(program_hash);
     if !program_dir.is_dir() {
@@ -118,6 +120,7 @@ pub fn post_compute_generate_proof(
             let proof_json = serde_json::from_str(&proof_str).unwrap();
 
             Ok(Json(GenerateProofResponseBody {
+                time: now.elapsed(),
                 payload: proof_json,
             }))
         }
