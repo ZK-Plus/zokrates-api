@@ -107,59 +107,54 @@ pub async fn post_compile_zokrates(
     }
 }
 
-// TODO: FIX test by converting string to Data type
-// #[cfg(test)]
-// mod test {
-//     use super::super::super::rocket;
-//     use super::*;
-//     use rocket::http::{ContentType, Status};
-//     use rocket::local::blocking::Client;
 
-//     fn request_example() -> Data<'static> {
-//         Data::<'static>::from::<&str>(
-//             "def main(field N) -> (bool):\n    return (N == 1)"
-//         )
-//     }
+#[cfg(test)]
+mod test {
+    use super::super::super::rocket;
+    use super::*;
+    use std::fs::read_to_string;
+    use rocket::http::{ContentType, Status};
+    use rocket::local::blocking::Client;
 
-//     #[test]
-//     fn successful_compilation() {
-//         let req_body = r#"{
-//             "program": "def main(field N) -> bool {\n    return (N == 1);\n}"
-//         }"#;
-//         let program_hash =
-//             "FF2482276ADCD956ACB349EC598F31C33DA08B210567E5847D46D18C73855365".to_string();
-//         let program_abi_str = r#"{
-//             "inputs": [
-//                 {
-//                     "name": "N",
-//                     "public": true,
-//                     "type": "field"
-//                 }
-//             ],
-//             "output": {
-//                 "type": "bool"
-//             }
-//         }"#;
-//         let program_abi: serde_json::Value =
-//             serde_json::from_str(program_abi_str).expect("correct json abi string");
 
-//         let client = Client::tracked(rocket()).expect("valid rocket instance");
-//         let res = client
-//             .post(uri!(post_compile_zokrates))
-//             .header(ContentType::JSON)
-//             .body(req_body)
-//             .dispatch();
+    #[test]
+    fn successful_compilation() {
+        let program_hash =
+            "FF2482276ADCD956ACB349EC598F31C33DA08B210567E5847D46D18C73855365".to_string();
+        let program_abi_str = r#"{
+            "inputs": [
+                {
+                    "name": "N",
+                    "public": true,
+                    "type": "field"
+                }
+            ],
+            "output": {
+                "type": "bool"
+            }
+        }"#;
+        let program_abi: serde_json::Value =
+            serde_json::from_str(program_abi_str).expect("correct json abi string");
 
-//         assert_eq!(res.status(), Status::Ok);
-//         assert_eq!(res.content_type(), Some(ContentType::JSON));
+        
+        let file = read_to_string("tests/test.zok").unwrap();
+        let client = Client::tracked(rocket()).unwrap();
+        let res = client
+            .post(uri!(post_compile_zokrates))
+            .body(file)
+            .dispatch();
 
-//         let compilation = res
-//             .into_json::<CompileResponseBody>()
-//             .expect("Compile Response Body");
-//         assert_eq!(compilation.program_hash, program_hash);
-//         assert_eq!(compilation.abi, program_abi);
+        println!("{:?}", res);
+        assert_eq!(res.status(), Status::Ok);
+        assert_eq!(res.content_type(), Some(ContentType::JSON));
 
-//         // delete compilation outputs
-//         remove_dir_all(format!("out/{}", program_hash)).unwrap();
-//     }
-// }
+        let compilation = res
+            .into_json::<CompileResponseBody>()
+            .expect("Compile Response Body");
+        assert_eq!(compilation.program_hash, program_hash);
+        assert_eq!(compilation.abi, program_abi);
+
+        // delete compilation outputs
+        remove_dir_all(format!("out/{}", program_hash)).unwrap();
+    }
+}
