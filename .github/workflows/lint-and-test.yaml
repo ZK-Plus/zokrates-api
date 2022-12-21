@@ -1,0 +1,39 @@
+on: [pull_request]
+
+env:
+  CARGO_TERM_COLOR: always
+
+name: Lint and Test
+
+jobs:
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+          components: rustfmt, clippy
+
+      - name: Lint
+        run: |
+          cargo fmt --all -- --check
+          cargo clippy --no-deps -- -D warnings
+  
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+          components: rustfmt, clippy
+      
+      - name: Test
+        run: |
+          cargo test

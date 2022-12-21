@@ -1,0 +1,25 @@
+FROM rustlang/rust:nightly-alpine3.12 as build
+
+WORKDIR /build
+
+COPY Cargo.toml Cargo.toml
+COPY Rocket.toml Rocket.toml
+COPY zokrates zokrates
+COPY src src
+
+RUN apk add --no-cache musl-dev
+
+RUN cargo build --release
+
+FROM alpine:3.16.0 as runner
+
+RUN apk update \
+    && apk add --no-cache ca-certificates tzdata
+
+WORKDIR /app
+
+COPY --from=build /build/target/release .
+COPY --from=build /build/Rocket.toml .
+COPY --from=build /build/zokrates/zokrates_stdlib/stdlib ./zokrates/zokrates_stdlib/stdlib
+
+ENTRYPOINT [ "./zokrates_api" ]

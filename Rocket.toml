@@ -1,0 +1,13 @@
+[default]
+address = "0.0.0.0"
+limits = { json = "100MiB" }
+
+out_dir = "out"
+zok_program_size_limit = "10Mib"
+proving_key_file_size_limit = "1Gib"
+
+[debug]
+log_level = "debug"
+workers = 2
+
+[release]
