@@ -5,7 +5,7 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a> -->
 
-  <h2 align="center">ZoKrates-api</h3>
+  <h2 align="center">ZoKrates-API</h3>
 
   <p align="center">
     The ZoKrates core library wrap around an API
@@ -38,6 +38,8 @@
       - [Docker](#docker-1)
       - [locally](#locally)
   - [Usage](#usage)
+    - [Proof Setup](#proof-setup)
+    - [Proof Generation](#proof-generation)
 - [Contributing](#contributing)
   - [Running testing](#running-testing)
   - [Linting and Formatting](#linting-and-formatting)
@@ -50,21 +52,21 @@
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-ZoKrates-api is a JSON API wrapper around the Zokrates commands involved in the  generation of zk-SNARKs proofs.
+ZoKrates-API is a JSON API wrapper around the Zokrates commands involved in the  generation of zk-SNARKs proofs.
 Being able to perform Zokrates operations through http facilitates the automation of processes in which the calculation of zk-SNARKs is required.
-Furthermore, Zokrates-api was developed to be easily deployed as micro-service on the cloud, to avoid running into memory problems so common when developing zk-SNARKs.
-With zokrates-api, you can have multiple instances running in parallel on a Kubernetes cluster.
+Furthermore, ZoKrates-API was developed to be easily deployed as micro-service on the cloud, to avoid running into memory problems so common when developing zk-SNARKs.
+With ZoKrates-API, you can have multiple instances running in parallel on a Kubernetes cluster.
 
-Zokrates-api aims to tackle the following problems:
+ZoKrates-API aims to tackle the following problems:
 * Once you figure out how zk-SNARKs can solve your specific problem, Don't waste your time how to embed it on your system. Pull the image and communicate with the service through standard http requests.
-* Though to be used as a micro-service, ZoKrates-api can be scaled horizontally and vertically with ease.
-* Zokrates-api is written in rust and provides a performance boost and memory granularity compare to ZoKrates-js 
+* Though to be used as a micro-service, ZoKrates-API can be scaled horizontally and vertically with ease.
+* ZoKrates-API is written in rust and provides a performance boost and memory granularity compare to ZoKrates-js 
 
 ## Setup 
 
 ### Docker 
 ```sh
-$ docker run -p 8000:8000 alvaround/zokrates-api:latest
+$ docker run -p 8000:8000 --env ROCKET_LOG_LEVEL=normal alvaround/zokrates-api:latest
 ```
 
 ### From source
@@ -87,6 +89,23 @@ $ RUST_MIN_STACK=1000000 cargo +nightly watch -x run
 ## Usage
 
 Once you have the image running locally, open the OpenAPI interface on [http://0.0.0.0:8000/docs/index.html](http://0.0.0.0:8000/docs/index.html) in your browser.
+In the url you can access all the methods support, endpoints, body schemas, and response tes supported by the API.
+
+The API is able to generate proofs for multiple `.zok` at once. However, for each new `.zok` the Proof Setup process has to be done once.
+
+### Proof Setup
+
+  1. Add your `.zok` file in the `POST /compile` endpoint and click execute. Zokrates will compile the program on the server. This can take some time. If the program compiles successfully, the response constains the `program_hash` and the abi.json structure. You will need both information on later steps.
+  2. Call the `POST /<PROGRAM_HASH>/proving-key` with the `program_hash` from previous step and the proving key of the program attached in the response.
+
+### Proof Generation
+
+Once the proof Setup step is done, you can create zk-SNARKs by providing a valid witness in the .json format specified in `abi` field in the response of the `POST /compile`.
+You have two ways to get a proof from a valid witness: 
+
+  - Calling the endpoint `POST /<PROGRAM_HASH>/compute-generate-proof`. This is the preferred and simplest option. This endpoint takes the proof arguments as inputs and delivers the final proof in the response under the `payload` field.
+  - Calling the endpoints `POST /<PROGRAM_HASH>/compute-witness` and `POST /<PROGRAM_HASH>/generate-proof`. These two endpoints replicate the functionality of the ZoKrates CLI. `POST /<PROGRAM_HASH>/compute-witness` takes the proof arguments and generates the witness. The witness is the used by `<PROGRAM_HASH>/generate-proof` to generate the zk-SNARK.
+  
 
 # Contributing
 
