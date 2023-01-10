@@ -13,7 +13,9 @@ pub fn api_compile<'a, T: Field>(
     let stdlib_path = "zokrates/zokrates_stdlib/stdlib";
     match Path::new(stdlib_path).exists() {
         true => Ok(()),
-        _ => Err(format!("Invalid standard library source path: {stdlib_path}")),
+        _ => Err(format!(
+            "Invalid standard library source path: {stdlib_path}"
+        )),
     }?;
 
     let config = CompileConfig::default();
