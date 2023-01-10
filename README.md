@@ -50,18 +50,21 @@
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-ZoKrates-api wraps ZoKrates commands around an API in order to facilitate the generation of zk-SNARKs proofs on a large scale.
+ZoKrates-api is a JSON API wrapper around the Zokrates commands involved in the  generation of zk-SNARKs proofs.
+Being able to perform Zokrates operations through http facilitates the automation of processes in which the calculation of zk-SNARKs is required.
+Furthermore, Zokrates-api was developed to be easily deployed as micro-service on the cloud, to avoid running into memory problems so common when developing zk-SNARKs.
+With zokrates-api, you can have multiple instances running in parallel on a Kubernetes cluster.
 
-Here's why:
+Zokrates-api aims to tackle the following problems:
 * Once you figure out how zk-SNARKs can solve your specific problem, Don't waste your time how to embed it on your system. Pull the image and communicate with the service through standard http requests.
 * Though to be used as a micro-service, ZoKrates-api can be scaled horizontally and vertically with ease.
-* Zokrates-api is written in rust and provides a performance boost compare to ZoKrates-js 
+* Zokrates-api is written in rust and provides a performance boost and memory granularity compare to ZoKrates-js 
 
 ## Setup 
 
 ### Docker 
 ```sh
-$ docker run alvaround/zokrates-api:latest
+$ docker run -p 8000:8000 alvaround/zokrates-api:latest
 ```
 
 ### From source
@@ -83,7 +86,7 @@ $ RUST_MIN_STACK=1000000 cargo +nightly watch -x run
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Once you have the image running locally, open the following OpenAPI interface on this [link](http://0.0.0.0:8000/docs/index.html) in your browser.
+Once you have the image running locally, open the OpenAPI interface on [http://0.0.0.0:8000/docs/index.html](http://0.0.0.0:8000/docs/index.html) in your browser.
 
 # Contributing
 
