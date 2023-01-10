@@ -1,10 +1,10 @@
-use zokrates_api::utils::config::AppConfig;
-use zokrates_api::utils::errors::{ApiError, ApiResult};
 use rocket::serde::{json::Json, Serialize};
 use rocket::{Data, State};
 use rocket_okapi::okapi::schemars::JsonSchema;
 use rocket_okapi::openapi;
 use std::path::Path;
+use zokrates_api::utils::config::AppConfig;
+use zokrates_api::utils::errors::{ApiError, ApiResult};
 
 #[derive(Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
@@ -23,8 +23,7 @@ pub async fn post_proving_key(
     let path = Path::new(&config.out_dir).join(program_hash);
     if !path.is_dir() {
         return Err(ApiError::ResourceNotFound(format!(
-            "Proof {} have not been registered",
-            program_hash
+            "Proof {program_hash} have not been registered",
         )));
     }
 
@@ -37,6 +36,6 @@ pub async fn post_proving_key(
         .map_err(|e| ApiError::InternalError(e.to_string()))?;
 
     Ok(Json(ProvingKeyResponseBody {
-        message: format!("proving key recorded for proof {}", program_hash),
+        message: format!("proving key recorded for proof {program_hash}"),
     }))
 }

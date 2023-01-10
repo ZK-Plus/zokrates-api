@@ -14,8 +14,7 @@ pub fn api_compile<'a, T: Field>(
     match Path::new(stdlib_path).exists() {
         true => Ok(()),
         _ => Err(format!(
-            "Invalid standard library source path: {}",
-            stdlib_path
+            "Invalid standard library source path: {stdlib_path}"
         )),
     }?;
 

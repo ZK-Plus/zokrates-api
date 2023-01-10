@@ -1,6 +1,7 @@
 [default]
 address = "0.0.0.0"
 limits = { json = "100MiB" }
+log_level = "normal"
 
 out_dir = "out"
 zok_program_size_limit = "10Mib"

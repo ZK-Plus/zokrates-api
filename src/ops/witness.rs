@@ -25,13 +25,13 @@ pub fn compute_witness<T: Field, I: Iterator<Item = ir::Statement<T>>>(
         }
         Err(_) => Err(String::from("???")),
     }
-    .map_err(|e| format!("Could not parse argument: {}", e))?;
+    .map_err(|e| format!("Could not parse argument: {e}"))?;
 
     let interpreter = Interpreter::default();
 
     let witness = interpreter
         .execute_with_log_stream(ir_prog, &input.encode(), &mut std::io::stdout())
-        .map_err(|e| format!("Execution failed: {}", e))?;
+        .map_err(|e| format!("Execution failed: {e}"))?;
 
     use zokrates_abi::Decode;
 
