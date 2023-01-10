@@ -31,7 +31,7 @@ impl<'r, 'o: 'r> Responder<'r, 'o> for ApiError {
         // log `self` to your favored error tracker, e.g.
         // sentry::capture_error(&self);
         let mut res = Json(ErrorResponse {
-            error_message: format!("{:?}", self),
+            error_message: format!("{self:?}"),
         })
         .respond_to(req)?;
 
