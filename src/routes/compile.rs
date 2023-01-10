@@ -107,7 +107,6 @@ pub async fn post_compile_zokrates(
     }
 }
 
-
 #[cfg(test)]
 mod test {
     use super::super::super::rocket;
@@ -115,7 +114,6 @@ mod test {
     use rocket::http::{ContentType, Status};
     use rocket::local::blocking::Client;
     use std::fs::read_to_string;
-
 
     #[test]
     fn successful_compilation() {
@@ -136,7 +134,6 @@ mod test {
         let program_abi: serde_json::Value =
             serde_json::from_str(program_abi_str).expect("correct json abi string");
 
-        
         let file = read_to_string("tests/test.zok").unwrap();
         let client = Client::tracked(rocket()).unwrap();
         let res = client
