@@ -48,8 +48,7 @@ pub fn post_generate_proof(
     let mut path = program_dir.join("out");
     if !path.exists() {
         return Err(ApiError::ResourceNotFound(format!(
-            "Binary file for proof {} does not exists. Commile the program first",
-            program_hash
+            "Binary file for proof {program_hash} does not exists. Commile the program first",
         )));
     }
     let program_file = File::open(&path).map_err(|e| ApiError::InternalError(e.to_string()))?;
