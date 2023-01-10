@@ -40,8 +40,7 @@ pub fn post_generate_proof(
     let program_dir = Path::new(&config.out_dir).join(program_hash);
     if !program_dir.is_dir() {
         return Err(ApiError::ResourceNotFound(format!(
-            "Proof {} have not been registered",
-            program_hash
+            "Proof {program_hash} have not been registered",
         )));
     }
 
@@ -62,8 +61,7 @@ pub fn post_generate_proof(
     path = program_dir.join("proving.key");
     if !path.exists() {
         return Err(ApiError::ResourceNotFound(format!(
-            "Binary file for proof {} does not exists. Commile the program first",
-            program_hash
+            "Binary file for proof {program_hash} does not exists. Commile the program first",
         )));
     }
     let pk_file = File::open(&path).map_err(|why| {
@@ -78,7 +76,7 @@ pub fn post_generate_proof(
 
     // read witness for request body
     let witness = ir::Witness::read(req_body.witness.as_bytes())
-        .map_err(|why| ApiError::InternalError(format!("Could not load witness: {:?}", why)))?;
+        .map_err(|why| ApiError::InternalError(format!("Could not load witness: {why:?}")))?;
     log::debug!("read witness successfully");
 
     match prog {

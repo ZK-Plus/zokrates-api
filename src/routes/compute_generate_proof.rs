@@ -34,8 +34,7 @@ pub fn post_compute_generate_proof(
     let program_dir = Path::new(&config.out_dir).join(program_hash);
     if !program_dir.is_dir() {
         return Err(ApiError::ResourceNotFound(format!(
-            "Proof {} have not been registered",
-            program_hash
+            "Proof {program_hash} have not been registered",
         )));
     }
 
@@ -46,8 +45,7 @@ pub fn post_compute_generate_proof(
     let bin_path = program_dir.join("out");
     if !bin_path.exists() {
         return Err(ApiError::ResourceNotFound(format!(
-            "Binary file for proof {} does not exists. Commile the program first",
-            program_hash
+            "Binary file for proof {program_hash} does not exists. Commile the program first",
         )));
     }
     let mut file = File::open(&bin_path).map_err(|why| {
@@ -60,8 +58,7 @@ pub fn post_compute_generate_proof(
     let mut path = program_dir.join("abi.json");
     if !path.exists() {
         return Err(ApiError::ResourceNotFound(format!(
-            "ABI file for proof {} does not exists. Commile the program first",
-            program_hash
+            "ABI file for proof {program_hash} does not exists. Commile the program first",
         )));
     }
     file = File::open(&path).map_err(|why| {
@@ -75,8 +72,8 @@ pub fn post_compute_generate_proof(
     path = program_dir.join("proving.key");
     if !path.exists() {
         return Err(ApiError::ResourceNotFound(format!(
-            "Binary file for proof {} does not exists. Commile the program first",
-            program_hash
+            "Binary file for proof {program_hash} does not exists. Commile the program first",
+            
         )));
     }
     let pk_file = File::open(&path).map_err(|why| {
@@ -94,7 +91,7 @@ pub fn post_compute_generate_proof(
             log::debug!("Computing witness...");
             let (witness, _output) =
                 compute_witness(p, witness.payload.clone(), abi).map_err(|err| {
-                    ApiError::CompilationError(format!("error computing witness:\n {}", err))
+                    ApiError::CompilationError(format!("error computing witness:\n {err}"))
                 })?;
 
             log::debug!("Generating proof...");

@@ -37,8 +37,7 @@ pub fn post_witness(
     let program_dir = Path::new(&config.out_dir).join(program_hash);
     if !program_dir.is_dir() {
         return Err(ApiError::ResourceNotFound(format!(
-            "Proof {} have not been registered",
-            program_hash
+            "Proof {program_hash} have not been registered",
         )));
     }
 
@@ -47,8 +46,7 @@ pub fn post_witness(
     let mut path = program_dir.join("out");
     if !path.exists() {
         return Err(ApiError::ResourceNotFound(format!(
-            "Binary file for proof {} does not exists. Commile the program first",
-            program_hash
+            "Binary file for proof {program_hash} does not exists. Commile the program first",
         )));
     }
     let mut file = File::open(&path).map_err(|why| {
@@ -61,8 +59,7 @@ pub fn post_witness(
     path = program_dir.join("abi.json");
     if !path.exists() {
         return Err(ApiError::ResourceNotFound(format!(
-            "ABI file for proof {} does not exists. Commile the program first",
-            program_hash
+            "ABI file for proof {program_hash} does not exists. Commile the program first",
         )));
     }
     file = File::open(&path).map_err(|why| {
@@ -79,8 +76,7 @@ pub fn post_witness(
                 output,
             })),
             Err(err) => Err(ApiError::CompilationError(format!(
-                "error computing witness:\n {}",
-                err
+                "error computing witness:\n {err}",
             ))),
         },
         _ => unreachable!(),
