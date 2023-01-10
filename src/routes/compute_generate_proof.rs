@@ -73,7 +73,6 @@ pub fn post_compute_generate_proof(
     if !path.exists() {
         return Err(ApiError::ResourceNotFound(format!(
             "Binary file for proof {program_hash} does not exists. Commile the program first",
-            
         )));
     }
     let pk_file = File::open(&path).map_err(|why| {
