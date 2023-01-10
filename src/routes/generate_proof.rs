@@ -1,6 +1,3 @@
-use zokrates_api::ops::proof::generate_proof;
-use zokrates_api::utils::config::AppConfig;
-use zokrates_api::utils::errors::{ApiError, ApiResult};
 use rocket::serde::{json::Json, Deserialize, Serialize};
 use rocket::{post, State};
 use rocket_okapi::okapi::schemars::JsonSchema;
@@ -9,6 +6,9 @@ use std::fs::File;
 use std::io::{BufReader, Read};
 use std::path::Path;
 use std::time::{Instant, Duration};
+use zokrates_api::ops::proof::generate_proof;
+use zokrates_api::utils::config::AppConfig;
+use zokrates_api::utils::errors::{ApiError, ApiResult};
 use zokrates_ark::Ark;
 use zokrates_ast::ir::{self, ProgEnum};
 use zokrates_proof_systems::GM17;

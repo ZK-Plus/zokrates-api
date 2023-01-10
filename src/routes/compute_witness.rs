@@ -1,6 +1,3 @@
-use zokrates_api::ops::witness::compute_witness;
-use zokrates_api::utils::config::AppConfig;
-use zokrates_api::utils::errors::{ApiError, ApiResult};
 use rocket::serde::{json::Json, Deserialize, Serialize};
 use rocket::{post, State};
 use rocket_okapi::okapi::schemars::JsonSchema;
@@ -9,6 +6,9 @@ use serde_json::from_reader;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::Path;
+use zokrates_api::ops::witness::compute_witness;
+use zokrates_api::utils::config::AppConfig;
+use zokrates_api::utils::errors::{ApiError, ApiResult};
 use zokrates_ast::ir::ProgEnum;
 use zokrates_ast::typed::abi::Abi;
 

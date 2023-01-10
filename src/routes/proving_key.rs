@@ -1,10 +1,10 @@
-use zokrates_api::utils::config::AppConfig;
-use zokrates_api::utils::errors::{ApiError, ApiResult};
 use rocket::serde::{json::Json, Serialize};
 use rocket::{Data, State};
 use rocket_okapi::okapi::schemars::JsonSchema;
 use rocket_okapi::openapi;
 use std::path::Path;
+use zokrates_api::utils::config::AppConfig;
+use zokrates_api::utils::errors::{ApiError, ApiResult};
 
 #[derive(Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]

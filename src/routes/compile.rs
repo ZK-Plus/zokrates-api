@@ -1,6 +1,3 @@
-use zokrates_api::ops::compilation::api_compile;
-use zokrates_api::utils::config::AppConfig;
-use zokrates_api::utils::errors::{ApiError, ApiResult};
 use rocket::serde::{json::Json, Deserialize, Serialize};
 use rocket::{Data, State};
 use rocket_okapi::okapi::schemars::JsonSchema;
@@ -11,6 +8,9 @@ use std::fs::{create_dir_all, remove_dir_all, write, File};
 use std::io::BufWriter;
 use std::path::Path;
 use typed_arena::Arena;
+use zokrates_api::ops::compilation::api_compile;
+use zokrates_api::utils::config::AppConfig;
+use zokrates_api::utils::errors::{ApiError, ApiResult};
 use zokrates_field::Bn128Field;
 
 #[derive(Serialize, Deserialize, JsonSchema)]
@@ -112,9 +112,9 @@ pub async fn post_compile_zokrates(
 mod test {
     use super::super::super::rocket;
     use super::*;
-    use std::fs::read_to_string;
     use rocket::http::{ContentType, Status};
     use rocket::local::blocking::Client;
+    use std::fs::read_to_string;
 
 
     #[test]
