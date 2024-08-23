@@ -106,7 +106,7 @@ pub fn post_compute_generate_proof(
             let prog = ProgEnum::deserialize(&mut reader).map_err(ApiError::InternalError)?;
 
             let proof = match prog {
-                ProgEnum::Bn128Program(p) => generate_proof::<_, _, GM17, Ark>(p, witness, pk)
+                ProgEnum::Bn128Program(p) => generate_proof::<_, _, GM17, Ark>(p, witness, pk_reader)
                     .map_err(ApiError::CompilationError)?,
                 _ => unreachable!(),
             };

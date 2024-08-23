@@ -6,8 +6,8 @@ use zokrates_ast::typed::abi::Abi;
 use zokrates_field::Field;
 use zokrates_interpreter::Interpreter;
 
-pub fn compute_witness<T: Field, I: Iterator<Item = ir::Statement<T>>>(
-    ir_prog: ir::ProgIterator<T, I>,
+pub fn compute_witness<'a, T: Field, I: Iterator<Item = ir::Statement<'a, T>>>(
+    ir_prog: ir::ProgIterator<'a, T, I>,
     arguments: serde_json::Value,
     abi: Abi,
 ) -> Result<(ir::Witness<T>, serde_json::Value), String> {
@@ -30,7 +30,12 @@ pub fn compute_witness<T: Field, I: Iterator<Item = ir::Statement<T>>>(
     let interpreter = Interpreter::default();
 
     let witness = interpreter
-        .execute_with_log_stream(ir_prog, &input.encode(), &mut std::io::stdout())
+        .execute_with_log_stream(
+            &input.encode(), 
+            ir_prog.statements,
+            &ir_prog.arguments,
+            &ir_prog.solvers,
+            &mut std::io::stdout())
         .map_err(|e| format!("Execution failed: {e}"))?;
 
     use zokrates_abi::Decode;

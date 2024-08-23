@@ -17,6 +17,7 @@ serde_json = { version = "1.0", features = ["preserve_order"] }
 log = "0.4"
 typed-arena = "1.4.1"
 sha2 = "0.10"
+rand = "0.8"
 
 # zokrates
 zokrates_core = { version = "0.7", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_core", default-features = false }
@@ -28,6 +29,7 @@ zokrates_circom = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates
 zokrates_proof_systems = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_proof", default-features = false }
 zokrates_ark = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_ark", default-features = false }
 zokrates_common = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_common", default-features = false }
+zokrates_abi = { version = "0.1.9", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_field", default-features = false }
 
 # open-api
 schemars = "0.8"

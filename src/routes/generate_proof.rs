@@ -71,6 +71,7 @@ pub fn post_generate_proof(
     pk_reader.read_to_end(&mut pk).map_err(|why| {
         ApiError::InternalError(format!("Could not read {}: {}", path.display(), why))
     })?;
+
     log::debug!("read proving key successfully");
 
     // read witness for request body
@@ -80,7 +81,7 @@ pub fn post_generate_proof(
 
     match prog {
         ProgEnum::Bn128Program(p) => {
-            let proof = generate_proof::<_, _, GM17, Ark>(p, witness, pk)
+            let proof = generate_proof::<_, _, GM17, Ark>(p, witness, pk_reader)
                 .map_err(ApiError::CompilationError)?;
 
             let proof_str = serde_json::to_string_pretty(&proof).unwrap();

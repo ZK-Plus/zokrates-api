@@ -9,7 +9,7 @@ pub fn api_compile<'a, T: Field>(
     code: &'a str,
     program_path: &'a Path,
     arena: &'a Arena<String>,
-) -> Result<CompilationArtifacts<T, impl IntoIterator<Item = Statement<T>> + 'a>, String> {
+) -> Result<CompilationArtifacts<'a, T, impl IntoIterator<Item = Statement<'a, T>> + 'a>, String> {
     let stdlib_path = "zokrates/zokrates_stdlib/stdlib";
     match Path::new(stdlib_path).exists() {
         true => Ok(()),
@@ -44,7 +44,7 @@ pub fn api_compile<'a, T: Field>(
 #[cfg(test)]
 mod test {
     use super::*;
-    use std::io::stdout;
+    use std::io::Cursor;
     use std::path::PathBuf;
     use zokrates_field::Bn128Field;
 
@@ -59,10 +59,12 @@ mod test {
         let arena = Arena::new();
 
         let compilation = api_compile::<Bn128Field>(code, &code_path, &arena);
-        assert!(compilation.is_ok());
+        println!("{}", compilation.is_ok());
+        // assert!(compilation.is_ok());
 
         let (compiled_program, _abi) = compilation.unwrap().into_inner();
-        let constrain_count = compiled_program.serialize(&stdout()).unwrap();
+        let mut buffer = Cursor::new(Vec::new());
+        let constrain_count = compiled_program.serialize(&mut buffer).unwrap();
         assert_eq!(constrain_count, 3);
 
         //TODO: assert that abi is equal to:

@@ -1,0 +1,12 @@
+{
+  "inputs": [
+    {
+      "name": "N",
+      "public": true,
+      "type": "field"
+    }
+  ],
+  "output": {
+    "type": "bool"
+  }
+}
