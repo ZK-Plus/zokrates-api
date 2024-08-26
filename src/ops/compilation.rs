@@ -10,7 +10,7 @@ pub fn api_compile<'a, T: Field>(
     program_path: &'a Path,
     arena: &'a Arena<String>,
 ) -> Result<CompilationArtifacts<'a, T, impl IntoIterator<Item = Statement<'a, T>> + 'a>, String> {
-    let stdlib_path = "zokrates/zokrates_stdlib/stdlib";
+    let stdlib_path = "ZoKrateslib/zokrates_stdlib/stdlib";
     match Path::new(stdlib_path).exists() {
         true => Ok(()),
         _ => Err(format!(
