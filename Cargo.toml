@@ -20,16 +20,16 @@ sha2 = "0.10"
 rand = "0.8"
 
 # zokrates
-zokrates_core = { version = "0.7", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_core", default-features = false }
-zokrates_ast = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_ast", default-features = false }
-zokrates_field = { version = "0.5", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_field", default-features = false }
-zokrates_interpreter = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_interpreter",default-features = false }
-zokrates_fs_resolver = { version = "0.5", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace="zokrates_fs_resolver" }
-zokrates_circom = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace="zokrates_circom" }
-zokrates_proof_systems = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_proof", default-features = false }
-zokrates_ark = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_ark", default-features = false }
-zokrates_common = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_common", default-features = false }
-zokrates_abi = { version = "0.1.9", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", workspace = "zokrates_field", default-features = false }
+zokrates_core = { version = "0.7", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", default-features = false }
+zokrates_ast = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", default-features = false }
+zokrates_field = { version = "0.5", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", default-features = false }
+zokrates_interpreter = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", default-features = false }
+zokrates_fs_resolver = { version = "0.5", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8" }
+zokrates_circom = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8" }
+zokrates_proof_systems = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", default-features = false }
+zokrates_ark = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", default-features = false }
+zokrates_common = { version = "0.1", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", default-features = false }
+zokrates_abi = { version = "0.1.9", git = "https://github.com/Zokrates/ZoKrates", tag = "0.8.8", default-features = false }
 
 # open-api
 schemars = "0.8"
