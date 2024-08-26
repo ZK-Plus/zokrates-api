@@ -79,7 +79,7 @@ pub fn post_compute_generate_proof(
         ApiError::InternalError(format!("Could not open {}: {}", path.display(), why))
     })?;
     let pk_reader = BufReader::new(pk_file);
-    
+
     log::debug!("read proving key successfully");
 
     match prog {
@@ -103,8 +103,10 @@ pub fn post_compute_generate_proof(
             let prog = ProgEnum::deserialize(&mut reader).map_err(ApiError::InternalError)?;
 
             let proof = match prog {
-                ProgEnum::Bn128Program(p) => generate_proof::<_, _, GM17, Ark>(p, witness, pk_reader)
-                    .map_err(ApiError::CompilationError)?,
+                ProgEnum::Bn128Program(p) => {
+                    generate_proof::<_, _, GM17, Ark>(p, witness, pk_reader)
+                        .map_err(ApiError::CompilationError)?
+                }
                 _ => unreachable!(),
             };
 

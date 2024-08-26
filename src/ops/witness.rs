@@ -31,11 +31,12 @@ pub fn compute_witness<'a, T: Field, I: Iterator<Item = ir::Statement<'a, T>>>(
 
     let witness = interpreter
         .execute_with_log_stream(
-            &input.encode(), 
+            &input.encode(),
             ir_prog.statements,
             &ir_prog.arguments,
             &ir_prog.solvers,
-            &mut std::io::stdout())
+            &mut std::io::stdout(),
+        )
         .map_err(|e| format!("Execution failed: {e}"))?;
 
     use zokrates_abi::Decode;

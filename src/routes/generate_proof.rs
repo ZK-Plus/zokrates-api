@@ -1,7 +1,7 @@
 use rocket::serde::{json::Json, Serialize};
 use rocket::{
-    State,
     data::{Data, ToByteUnit},
+    State,
 };
 use rocket_okapi::okapi::schemars::JsonSchema;
 use rocket_okapi::openapi;
@@ -70,11 +70,12 @@ pub async fn post_generate_proof(
     let witness_path = program_dir.join("witness");
     witness
         .open(200.mebibytes())
-        .into_file(&witness_path).await
+        .into_file(&witness_path)
+        .await
         .map_err(|e| ApiError::InternalError(e.to_string()))?;
 
-    let witness_file = File::open(&witness_path)
-        .map_err(|why| ApiError::InternalError(why.to_string()))?;
+    let witness_file =
+        File::open(&witness_path).map_err(|why| ApiError::InternalError(why.to_string()))?;
 
     let witness_reader = BufReader::new(witness_file);
     let witness = ir::Witness::read(witness_reader)
@@ -123,4 +124,3 @@ pub async fn post_generate_proof(
 // .map_err(|e| NotFound(e.to_string()))?;
 //     assert_eq!(proof, blablabla);
 // }
-

@@ -5,7 +5,8 @@ use zokrates_ast::ir;
 use zokrates_field::Field;
 use zokrates_proof_systems::*;
 
-pub fn generate_proof<'a,
+pub fn generate_proof<
+    'a,
     T: Field,
     I: Iterator<Item = ir::Statement<'a, T>>,
     S: Scheme<T>,
@@ -16,7 +17,7 @@ pub fn generate_proof<'a,
     pk: impl Read,
 ) -> Result<TaggedProof<T, S>, String> {
     log::info!("Generating proof...");
-    let mut rng = StdRng::from_entropy(); 
+    let mut rng = StdRng::from_entropy();
     let proof = B::generate_proof(program, witness, pk, &mut rng);
     Ok(TaggedProof::<T, S>::new(proof.proof, proof.inputs))
 }
