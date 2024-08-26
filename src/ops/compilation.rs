@@ -59,8 +59,7 @@ mod test {
         let arena = Arena::new();
 
         let compilation = api_compile::<Bn128Field>(code, &code_path, &arena);
-        println!("{}", compilation.is_ok());
-        // assert!(compilation.is_ok());
+        assert!(compilation.is_ok());
 
         let (compiled_program, _abi) = compilation.unwrap().into_inner();
         let mut buffer = Cursor::new(Vec::new());
