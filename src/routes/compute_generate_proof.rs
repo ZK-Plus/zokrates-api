@@ -3,7 +3,7 @@ use rocket::{post, State};
 use rocket_okapi::openapi;
 use serde_json::from_reader;
 use std::fs::File;
-use std::io::{BufReader, Read};
+use std::io::BufReader;
 use std::path::Path;
 use std::time::Instant;
 use zokrates_api::ops::proof::generate_proof;
@@ -78,11 +78,8 @@ pub fn post_compute_generate_proof(
     let pk_file = File::open(&path).map_err(|why| {
         ApiError::InternalError(format!("Could not open {}: {}", path.display(), why))
     })?;
-    let mut pk: Vec<u8> = Vec::new();
-    let mut pk_reader = BufReader::new(pk_file);
-    pk_reader.read_to_end(&mut pk).map_err(|why| {
-        ApiError::InternalError(format!("Could not read {}: {}", path.display(), why))
-    })?;
+    let pk_reader = BufReader::new(pk_file);
+
     log::debug!("read proving key successfully");
 
     match prog {
@@ -106,8 +103,10 @@ pub fn post_compute_generate_proof(
             let prog = ProgEnum::deserialize(&mut reader).map_err(ApiError::InternalError)?;
 
             let proof = match prog {
-                ProgEnum::Bn128Program(p) => generate_proof::<_, _, GM17, Ark>(p, witness, pk)
-                    .map_err(ApiError::CompilationError)?,
+                ProgEnum::Bn128Program(p) => {
+                    generate_proof::<_, _, GM17, Ark>(p, witness, pk_reader)
+                        .map_err(ApiError::CompilationError)?
+                }
                 _ => unreachable!(),
             };
 

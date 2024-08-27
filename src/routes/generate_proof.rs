@@ -1,9 +1,12 @@
-use rocket::serde::{json::Json, Deserialize, Serialize};
-use rocket::{post, State};
+use rocket::serde::{json::Json, Serialize};
+use rocket::{
+    data::{Data, ToByteUnit},
+    State,
+};
 use rocket_okapi::okapi::schemars::JsonSchema;
 use rocket_okapi::openapi;
-use std::fs::File;
-use std::io::{BufReader, Read};
+use std::fs::{self, File};
+use std::io::BufReader;
 use std::path::Path;
 use std::time::{Duration, Instant};
 use zokrates_api::ops::proof::generate_proof;
@@ -12,13 +15,6 @@ use zokrates_api::utils::errors::{ApiError, ApiResult};
 use zokrates_ark::Ark;
 use zokrates_ast::ir::{self, ProgEnum};
 use zokrates_proof_systems::GM17;
-
-#[derive(Deserialize, Serialize, JsonSchema)]
-#[serde(crate = "rocket::serde")]
-#[schemars(example = "request_example")]
-pub struct GenerateProofRequestBody {
-    witness: String,
-}
 
 #[derive(Serialize, JsonSchema)]
 #[serde(crate = "rocket::serde")]
@@ -29,10 +25,10 @@ pub struct GenerateProofResponseBody {
 }
 
 #[openapi]
-#[post("/<program_hash>/generate-proof", format = "json", data = "<req_body>")]
-pub fn post_generate_proof(
+#[post("/<program_hash>/generate-proof", data = "<witness>")]
+pub async fn post_generate_proof(
     program_hash: &str,
-    req_body: Json<GenerateProofRequestBody>,
+    witness: Data<'_>,
     config: &State<AppConfig>,
 ) -> ApiResult<GenerateProofResponseBody> {
     let now = Instant::now();
@@ -66,27 +62,36 @@ pub fn post_generate_proof(
     let pk_file = File::open(&path).map_err(|why| {
         ApiError::InternalError(format!("Could not open {}: {}", path.display(), why))
     })?;
-    let mut pk: Vec<u8> = Vec::new();
-    let mut pk_reader = BufReader::new(pk_file);
-    pk_reader.read_to_end(&mut pk).map_err(|why| {
-        ApiError::InternalError(format!("Could not read {}: {}", path.display(), why))
-    })?;
+    let pk_reader = BufReader::new(pk_file);
+
     log::debug!("read proving key successfully");
 
     // read witness for request body
-    let witness = ir::Witness::read(req_body.witness.as_bytes())
+    let witness_path = program_dir.join("witness");
+    witness
+        .open(200.mebibytes())
+        .into_file(&witness_path)
+        .await
+        .map_err(|e| ApiError::InternalError(e.to_string()))?;
+
+    let witness_file =
+        File::open(&witness_path).map_err(|why| ApiError::InternalError(why.to_string()))?;
+
+    let witness_reader = BufReader::new(witness_file);
+    let witness = ir::Witness::read(witness_reader)
         .map_err(|why| ApiError::InternalError(format!("Could not load witness: {why:?}")))?;
     log::debug!("read witness successfully");
 
     match prog {
         ProgEnum::Bn128Program(p) => {
-            let proof = generate_proof::<_, _, GM17, Ark>(p, witness, pk)
+            let proof = generate_proof::<_, _, GM17, Ark>(p, witness, pk_reader)
                 .map_err(ApiError::CompilationError)?;
 
             let proof_str = serde_json::to_string_pretty(&proof).unwrap();
             log::debug!("Proof:\n{}", proof_str);
             let proof = serde_json::from_str(&proof_str).unwrap();
 
+            let _ = fs::remove_file(witness_path);
             Ok(Json(GenerateProofResponseBody {
                 time: now.elapsed(),
                 payload: proof,
@@ -119,15 +124,3 @@ pub fn post_generate_proof(
 // .map_err(|e| NotFound(e.to_string()))?;
 //     assert_eq!(proof, blablabla);
 // }
-
-// Request example for OpenApi Documentation
-fn request_example() -> GenerateProofRequestBody {
-    let witness = r#"~out_0 1
-~one 1
-_0 1
-_2 0
-_3 1"#
-        .to_string();
-
-    GenerateProofRequestBody { witness }
-}

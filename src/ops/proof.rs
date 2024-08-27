@@ -1,19 +1,24 @@
+use rand::{rngs::StdRng, SeedableRng};
+use std::io::Read;
+
 use zokrates_ast::ir;
 use zokrates_field::Field;
 use zokrates_proof_systems::*;
 
 pub fn generate_proof<
+    'a,
     T: Field,
-    I: Iterator<Item = ir::Statement<T>>,
+    I: Iterator<Item = ir::Statement<'a, T>>,
     S: Scheme<T>,
     B: Backend<T, S>,
 >(
-    program: ir::ProgIterator<T, I>,
+    program: ir::ProgIterator<'a, T, I>,
     witness: ir::Witness<T>,
-    pk: std::vec::Vec<u8>,
+    pk: impl Read,
 ) -> Result<TaggedProof<T, S>, String> {
     log::info!("Generating proof...");
-    let proof = B::generate_proof(program, witness, pk);
+    let mut rng = StdRng::from_entropy();
+    let proof = B::generate_proof(program, witness, pk, &mut rng);
     Ok(TaggedProof::<T, S>::new(proof.proof, proof.inputs))
 }
 
@@ -21,7 +26,7 @@ pub fn generate_proof<
 mod test {
     use super::*;
     use std::fs::File;
-    use std::io::{BufReader, Read};
+    use std::io::BufReader;
     use zokrates_ark::Ark;
     use zokrates_ast::ir::ProgEnum;
     use zokrates_proof_systems::GM17;
@@ -32,20 +37,15 @@ mod test {
         let mut reader = BufReader::new(file);
         let prog = ProgEnum::deserialize(&mut reader).unwrap();
 
-        let witness_str = r#"~out_0 1
-~one 1
-_0 1
-_2 0
-_3 1"#;
-        let witness = ir::Witness::read(witness_str.as_bytes()).unwrap();
+        let witness_file: File = File::open("tests/witness").unwrap();
+        let witness_reader = BufReader::new(witness_file);
+        let witness = ir::Witness::read(witness_reader).unwrap();
 
         let pk_file = File::open("tests/proving.key").unwrap();
-        let mut pk: Vec<u8> = Vec::new();
-        let mut pk_reader = BufReader::new(pk_file);
-        pk_reader.read_to_end(&mut pk).unwrap();
+        let pk_reader = BufReader::new(pk_file);
 
         let proof = match prog {
-            ProgEnum::Bn128Program(p) => generate_proof::<_, _, GM17, Ark>(p, witness, pk),
+            ProgEnum::Bn128Program(p) => generate_proof::<_, _, GM17, Ark>(p, witness, pk_reader),
             _ => unreachable!(),
         };
         assert!(proof.is_ok());
@@ -60,20 +60,15 @@ _3 1"#;
         let mut reader = BufReader::new(file);
         let prog = ProgEnum::deserialize(&mut reader).unwrap();
 
-        let witness_str = r#"~out_0 0
-~one 1
-_0 2
-_2 1
-_3 1"#;
-        let witness = ir::Witness::read(witness_str.as_bytes()).unwrap();
+        let witness_file: File = File::open("tests/witness").unwrap();
+        let witness_reader = BufReader::new(witness_file);
+        let witness = ir::Witness::read(witness_reader).unwrap();
 
         let pk_file = File::open("tests/proving.key").unwrap();
-        let mut pk: Vec<u8> = Vec::new();
-        let mut pk_reader = BufReader::new(pk_file);
-        pk_reader.read_to_end(&mut pk).unwrap();
+        let pk_reader = BufReader::new(pk_file);
 
         let proof = match prog {
-            ProgEnum::Bn128Program(p) => generate_proof::<_, _, GM17, Ark>(p, witness, pk),
+            ProgEnum::Bn128Program(p) => generate_proof::<_, _, GM17, Ark>(p, witness, pk_reader),
             _ => unreachable!(),
         };
 
