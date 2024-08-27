@@ -4,7 +4,7 @@ WORKDIR /build
 
 COPY Cargo.toml Cargo.toml
 COPY Rocket.toml Rocket.toml
-COPY zokrates zokrates
+COPY ZoKrateslib ZoKrateslib
 COPY src src
 
 RUN apk add --no-cache musl-dev
@@ -20,6 +20,6 @@ WORKDIR /app
 
 COPY --from=build /build/target/release .
 COPY --from=build /build/Rocket.toml .
-COPY --from=build /build/zokrates/zokrates_stdlib/stdlib ./zokrates/zokrates_stdlib/stdlib
+COPY --from=build /build/ZoKrateslib/zokrates_stdlib/stdlib ./zokrates/zokrates_stdlib/stdlib
 
 ENTRYPOINT [ "./zokrates_api" ]
